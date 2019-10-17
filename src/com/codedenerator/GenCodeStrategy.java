@@ -8,6 +8,11 @@ import com.intellij.psi.PsiStatement;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * @author liuxiaofeng
+ * @description 生成代码的策略
+ * @since 2019-10-17
+ */
 public abstract class GenCodeStrategy {
     protected List<String> code;
     protected Map<ClickMethod,List<String>> clickMap;

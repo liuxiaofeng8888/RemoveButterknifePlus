@@ -3,6 +3,7 @@ package com.actions;
 import com.codedenerator.AndroidCodeWriter;
 import com.filechain.*;
 import com.intellij.openapi.command.WriteCommandAction;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.*;
@@ -33,6 +34,7 @@ public class DeleteAction extends WriteCommandAction.Simple {
     public DeleteAction(Project project, PsiFile file,Document document, PsiClass psiClass){
         super(project, file);
         this.document = document;
+        System.out.println(document.getText().toString());
         currentDoc= document.getText().split("\n");
         this.project = project;
         this.file = file;
@@ -72,6 +74,7 @@ public class DeleteAction extends WriteCommandAction.Simple {
         for (Map.Entry<String,String> entry:nameAndIdMap.entrySet()){
             String codes;
             codes = entry.getKey() + "findViewById("+entry.getValue()+");";
+            //tv01 = TextView findviewbyid(R.id.tv01);
             code.add(codes);
         }
     }

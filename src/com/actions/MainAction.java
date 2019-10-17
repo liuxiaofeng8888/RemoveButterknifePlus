@@ -20,10 +20,11 @@ import com.intellij.psi.util.PsiUtilBase;
  * @since 2019-10-16
  */
 public class MainAction extends BaseGenerateAction {
-    protected PsiClass mClass;
-    String[] s1;
-    Project project;
-    PsiFile file;
+    private PsiClass mClass;
+    private String[] s1;
+    private Project project;
+    private PsiFile file;
+    private Editor editor;
     private PsiElementFactory mFactory;
 
     public MainAction() {
@@ -38,12 +39,12 @@ public class MainAction extends BaseGenerateAction {
     public void actionPerformed(AnActionEvent event) {
         try {
             project = event.getData(PlatformDataKeys.PROJECT);
-            Editor editor = event.getData(PlatformDataKeys.EDITOR);
+            editor = event.getData(PlatformDataKeys.EDITOR);
             file = PsiUtilBase.getPsiFileInEditor(editor, project);
             mFactory = JavaPsiFacade.getElementFactory(project);
             mClass = getTargetClass(editor,file);
-            Document document = editor.getDocument();
-            new DeleteAction(project,file,document,mClass).execute();
+            Document document = editor.getDocument();//以上都是从上下文中获取的辅助对象，具体可以查阅idea plugin文档
+            new DeleteAction(project,file,document,mClass).execute();////执行删除操作
         }catch (Exception e){
             e.printStackTrace();
         }
