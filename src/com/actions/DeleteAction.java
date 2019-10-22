@@ -1,6 +1,7 @@
 package com.actions;
 
 import com.codedenerator.AndroidCodeWriter;
+import com.codedenerator.FragmentStrategy;
 import com.filechain.*;
 import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.diagnostic.Logger;
@@ -8,6 +9,7 @@ import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.*;
 
+import javax.swing.*;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -25,17 +27,17 @@ public class DeleteAction extends WriteCommandAction.Simple {
     private PsiClass mClass;
     private PsiElementFactory mFactory;
     private Document document;
-    private Map<String,String> nameAndIdMap = new LinkedHashMap<>();
-    private Map<ClickMethod,List<String>> clickMap = new LinkedHashMap<>();
-    private BaseChain findAPIChain, findBindChain, findImportChain,findClickChain;
+    private Map<String, String> nameAndIdMap = new LinkedHashMap<>();
+    private Map<ClickMethod, List<String>> clickMap = new LinkedHashMap<>();
+    private BaseChain findAPIChain, findBindChain, findImportChain, findClickChain;
     private List code = new ArrayList();
     private List<Integer> deleteLineNumbers = new ArrayList<>();
 
-    public DeleteAction(Project project, PsiFile file,Document document, PsiClass psiClass){
+    public DeleteAction(Project project, PsiFile file, Document document, PsiClass psiClass) {
         super(project, file);
         this.document = document;
         System.out.println(document.getText().toString());
-        currentDoc= document.getText().split("\n");
+        currentDoc = document.getText().split("\n");
         this.project = project;
         this.file = file;
         this.mClass = psiClass;
@@ -53,10 +55,26 @@ public class DeleteAction extends WriteCommandAction.Simple {
         findBindChain.setNext(findAPIChain);
         findAPIChain.setNext(findClickChain);
 
-        findImportChain.handle(currentDoc,deleteLineNumbers,nameAndIdMap);
+        findImportChain.handle(currentDoc, deleteLineNumbers, nameAndIdMap);
+        if (mClass.getSuperClassType().toString().contains("Fragment")) {//如果是fragment提示输入view
+            String viewName = JOptionPane.showInputDialog("请输入你的View名称");
+            if (viewName != null && viewName.length() > 0) {
+                showAction(true,viewName);
+            }
+        } else {
+            showAction(false,null);
+        }
 
+    }
+
+    /**
+     * 是否显示
+     *
+     * @param show
+     */
+    private void showAction(boolean show,String viewName) {
         deleteCode();
-        genFindViewCode();
+        genFindViewCode(viewName);
         insertCodeToFile();
     }
 
@@ -70,22 +88,22 @@ public class DeleteAction extends WriteCommandAction.Simple {
         manager.commitDocument(document);
     }
 
-    private void genFindViewCode() {
-        for (Map.Entry<String,String> entry:nameAndIdMap.entrySet()){
+    private void genFindViewCode(String viewName) {
+        for (Map.Entry<String, String> entry : nameAndIdMap.entrySet()) {
             String codes;
-            codes = entry.getKey() + "findViewById("+entry.getValue()+");";
+            codes = entry.getKey() + viewName==null?"":viewName+"."+"findViewById(" + entry.getValue() + ");";
             //tv01 = TextView findviewbyid(R.id.tv01);
             code.add(codes);
         }
     }
 
-    private void insertCodeToFile(){
+    private void insertCodeToFile() {
         try {
             AndroidCodeWriter codeWriter = new AndroidCodeWriter(project, file);
-            codeWriter.setEnvData(mClass,mFactory);
-            codeWriter.setData(code,clickMap);
+            codeWriter.setEnvData(mClass, mFactory);
+            codeWriter.setData(code, clickMap);
             codeWriter.execute();
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }

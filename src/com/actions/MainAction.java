@@ -8,6 +8,7 @@ import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.ui.Messages;
 import com.intellij.psi.JavaPsiFacade;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElementFactory;
@@ -37,6 +38,7 @@ public class MainAction extends BaseGenerateAction {
 
     @Override
     public void actionPerformed(AnActionEvent event) {
+
         try {
             project = event.getData(PlatformDataKeys.PROJECT);
             editor = event.getData(PlatformDataKeys.EDITOR);

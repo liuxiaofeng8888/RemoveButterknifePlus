@@ -1,12 +1,15 @@
 package com.codedenerator;
 
 import com.filechain.ClickMethod;
+import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.ui.Messages;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElementFactory;
 import com.intellij.psi.PsiFile;
 
+import javax.swing.*;
 import java.util.List;
 import java.util.Map;
 
@@ -36,14 +39,14 @@ public class AndroidCodeWriter extends WriteCommandAction.Simple {
     protected void run() {
         GenCodeContext codeContext = new GenCodeContext(mClass, mFactory);
         String type = mClass.getSuperClassType().toString();
-        if (type.contains("Activity")){
-            codeContext.setStrategy(new ActivityStrategy(code,clickMap));
-        }else if (type.contains("Fragment")) {
-            codeContext.setStrategy(new FragmentStrategy(code,clickMap));
-        }else if (type.contains("ViewHolder")||type.contains("Adapter<ViewHolder>")) {
-            codeContext.setStrategy(new AdapterStrategy(code,clickMap));
-        }else {
-            codeContext.setStrategy(new CustomViewStrategy(code,clickMap));
+        if (type.contains("Activity")) {
+            codeContext.setStrategy(new ActivityStrategy(code, clickMap));
+        } else if (type.contains("Fragment")) {
+            codeContext.setStrategy(new FragmentStrategy(code, clickMap));
+        } else if (type.contains("ViewHolder") || type.contains("Adapter<ViewHolder>")) {
+            codeContext.setStrategy(new AdapterStrategy(code, clickMap));
+        } else {
+            codeContext.setStrategy(new CustomViewStrategy(code, clickMap));
         }
         codeContext.executeStrategy();
     }

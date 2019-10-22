@@ -1,6 +1,8 @@
 package com.codedenerator;
 
 import com.filechain.ClickMethod;
+import com.intellij.openapi.actionSystem.PlatformDataKeys;
+import com.intellij.openapi.ui.Messages;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElementFactory;
 import com.intellij.psi.PsiMethod;
